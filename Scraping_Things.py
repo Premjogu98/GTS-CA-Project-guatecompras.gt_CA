@@ -126,7 +126,13 @@ def Scrap_data(browser, get_htmlsource_text,details,contactor_name,contact_amoun
             cleanr = re.compile('<.*?>')
             Type_of_contest = re.sub(cleanr, '', Type_of_contest)
             Type_of_contest = string.capwords(str(Type_of_contest.strip()))
-        
+
+            Category = Decoded_get_htmlSource.partition("Categoría: </div>")[2].partition("</div>")[0]
+            cleanr = re.compile('<.*?>')
+            Category = re.sub(cleanr, '', Category)
+            Category = string.capwords(str(Category.strip()))
+            SegFields[23] = Category
+
             # Receiving_Offers = Decoded_get_htmlSource.partition("Tipo de recepción de ofertas: </div>")[2].partition("</div>")[0]
             # cleanr = re.compile('<.*?>')
             # Receiving_Offers = re.sub(cleanr, '', Receiving_Offers).strip()
@@ -150,7 +156,7 @@ def Scrap_data(browser, get_htmlsource_text,details,contactor_name,contact_amoun
             Status = re.sub(cleanr, '', Status).strip()
             Status = string.capwords(str(Status.strip()))
 
-            Collected_Tender_Details = str(Title) + "<br>\n" + "Modalidad: " + str(Modality) + "<br>\n" + "Tipo de concurso: " + str(Type_of_contest) + "<br>\n" + "Tipo Proceso: " + str(Process_Type) + "<br>\n" + "Estatus: " + str(Status)
+            Collected_Tender_Details = f'{str(Title)}<br>\nModalidad: {str(Modality)}<br>\nTipo de concurso: {str(Type_of_contest)}<br>\nTipo Proceso: {str(Process_Type)}<br>\nEstatus: {str(Status)}<br>\nCategoría: {str(Category)}'
             SegFields[18] = Collected_Tender_Details # award_details
 
             # ==================================================================================================================
