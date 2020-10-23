@@ -269,5 +269,6 @@ def Scrap_data(browser, get_htmlsource_text,details,contactor_name,contact_amoun
             exc_type, exc_obj, exc_tb = sys.exc_info()
             fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
             print("Error ON : ", sys._getframe().f_code.co_name + "--> " + str(e), "\n", exc_type, "\n", fname, "\n",exc_tb.tb_lineno)
+            global_var.On_Error += 1
             a = True
 

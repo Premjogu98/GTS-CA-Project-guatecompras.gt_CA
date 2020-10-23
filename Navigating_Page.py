@@ -14,8 +14,8 @@ app = wx.App()
 
 def ChromeDriver():
     chrome_options = Options()
-    chrome_options.add_extension('C:\\Translation EXE\\BrowsecVPN.crx')
-    browser = webdriver.Chrome(executable_path=str(f"C:\\Translation EXE\\chromedriver.exe"),chrome_options=chrome_options)
+    chrome_options.add_extension('F:\\BrowsecVPN.crx')
+    browser = webdriver.Chrome(executable_path=str(f"F:\\chromedriver.exe"),chrome_options=chrome_options)
     # browser.get("""https://chrome.google.com/webstore/detail/browsec-vpn-free-and-unli/omghfjlpggmjjaagoclmmobgdodcjboh?hl=en" ping="/url?sa=t&amp;source=web&amp;rct=j&amp;url=https://chrome.google.com/webstore/detail/browsec-vpn-free-and-unli/omghfjlpggmjjaagoclmmobgdodcjboh%3Fhl%3Den&amp;ved=2ahUKEwivq8rjlcHmAhVtxzgGHZ-JBMgQFjAAegQIAhAB""")
     wx.MessageBox(' -_-  Add Extension and Select Proxy Between ( 5 ) SEC -_- ', 'Info', wx.OK | wx.ICON_WARNING)
     time.sleep(5)  # WAIT UNTIL CHANGE THE MANUAL VPN SETtING
@@ -71,11 +71,12 @@ def Collect_link(browser):
     pages = browser.find_elements_by_xpath('//*[@class="TablaPagineo"]/td/a')
     pages_count = 0
     if len(pages) == 0:
-        pages_count = 1
+        pages_count = 2
     else:
-        pages_count = int(len(pages))
+        pages_count = int(len(pages)) + 1
     Main_tender_detail_list = []
-    for page_range in range(1, pages_count+1, 1):
+    page_range = 1
+    for page_range in range(pages_count):
         tr_count = 2
         for tender_id in browser.find_elements_by_xpath('//*[@id="MasterGC_ContentBlockHolder_dgResultado"]/tbody/tr/td[1]/div/span[1]'):
             tender_detail_list = []
@@ -96,7 +97,8 @@ def Collect_link(browser):
                 try:
                     for next_page in browser.find_elements_by_xpath(f'//*[@class="TablaPagineo"]/td/a[{str(page_range)}]'):
                         next_page.click()
-                        time.sleep(10)
+                        time.sleep(6)
+                        page_range +=
                         break
                     break
                 except:
@@ -106,7 +108,10 @@ def Collect_link(browser):
 
 def nav_links(Main_tender_detail_list,browser):
 
-    for details in Main_tender_detail_list:
+    dist_main_detail_list = []
+    dist_main_detail_list.extend(x for x in Main_tender_detail_list if x not in dist_main_detail_list) # remove Duplicate List From List
+    dist_main_detail_list1 = list(dist_main_detail_list)
+    for details in dist_main_detail_list1:
         browser.get(details[2])
         time.sleep(2)
         get_htmlsource_text = ''

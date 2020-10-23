@@ -21,6 +21,7 @@ def DB_connection():
             exc_type , exc_tb = sys.exc_info()
             fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
             print("Error ON : " , sys._getframe().f_code.co_name + "--> " + str(e) , "\n" , exc_type , "\n" , fname ,"\n" , exc_tb.tb_lineno)
+            global_var.On_Error += 1
             a = 0
             time.sleep(10)
 
@@ -32,6 +33,7 @@ def Error_fun(Error,Function_name,Source_name):
     mydb.commit()
     mycursor.close()
     mydb.close()
+    global_var.On_Error += 1
     return sql1
 
 def check_Duplication(get_htmlSource,SegFields):
@@ -94,7 +96,6 @@ def insert_in_Local(get_htmlSource , SegFields):
             mydb.commit()
             mydb.close()
             mycursor.close()
-            global_var.inserted += 1
             print("Code Reached On insert_in_Local")
             MyLoop = 1
         except Exception as e:
@@ -155,8 +156,8 @@ def insert_L2L(SegFields , HtmlDaoc_file_name):
             mydb.commit()
             mydb.close()
             mycursor.close()
-            global_var.inserted += 1
             print("Code Reached On insert_in_L2L")
+            global_var.inserted += 1
             MyLoop = 1
         except Exception as e:
             Function_name: str = sys._getframe().f_code.co_name
