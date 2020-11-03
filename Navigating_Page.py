@@ -14,8 +14,8 @@ app = wx.App()
 
 def ChromeDriver():
     chrome_options = Options()
-    chrome_options.add_extension('F:\\BrowsecVPN.crx')
-    browser = webdriver.Chrome(executable_path=str(f"F:\\chromedriver.exe"),chrome_options=chrome_options)
+    chrome_options.add_extension('C:\\BrowsecVPN.crx')
+    browser = webdriver.Chrome(executable_path=str(f"C:\\chromedriver.exe"),chrome_options=chrome_options)
     # browser.get("""https://chrome.google.com/webstore/detail/browsec-vpn-free-and-unli/omghfjlpggmjjaagoclmmobgdodcjboh?hl=en" ping="/url?sa=t&amp;source=web&amp;rct=j&amp;url=https://chrome.google.com/webstore/detail/browsec-vpn-free-and-unli/omghfjlpggmjjaagoclmmobgdodcjboh%3Fhl%3Den&amp;ved=2ahUKEwivq8rjlcHmAhVtxzgGHZ-JBMgQFjAAegQIAhAB""")
     wx.MessageBox(' -_-  Add Extension and Select Proxy Between ( 5 ) SEC -_- ', 'Info', wx.OK | wx.ICON_WARNING)
     time.sleep(5)  # WAIT UNTIL CHANGE THE MANUAL VPN SETtING
@@ -68,42 +68,47 @@ def ChromeDriver():
             break
 
 def Collect_link(browser):
-    pages = browser.find_elements_by_xpath('//*[@class="TablaPagineo"]/td/a')
-    pages_count = 0
-    if len(pages) == 0:
-        pages_count = 2
-    else:
-        pages_count = int(len(pages)) + 1
     Main_tender_detail_list = []
-    page_range = 1
-    for page_range in range(pages_count):
+    Page = True
+    list_of_page = []
+    while Page == True: 
         tr_count = 2
-        for tender_id in browser.find_elements_by_xpath('//*[@id="MasterGC_ContentBlockHolder_dgResultado"]/tbody/tr/td[1]/div/span[1]'):
-            tender_detail_list = []
-            tender_id = tender_id.get_attribute('innerText').strip()
-            tender_detail_list.append(tender_id)
-            for publish_date in browser.find_elements_by_xpath(f'//*[@id="MasterGC_ContentBlockHolder_dgResultado"]/tbody/tr[{str(tr_count)}]/td[1]/div/span[2]'):
-                publish_date = publish_date.get_attribute('innerText').replace('..','.').strip()
-                tender_detail_list.append(publish_date)
-                break
-            for tender_href in browser.find_elements_by_xpath(f'//*[@id="MasterGC_ContentBlockHolder_dgResultado"]/tbody/tr[{str(tr_count)}]/td[2]/div/div/a'):
-                tender_href = tender_href.get_attribute('href').strip()
-                tender_detail_list.append(tender_href)
-                break
-            Main_tender_detail_list.append(tender_detail_list)
-            tr_count += 1
-        if len(pages) != 0:
-            while True:
+        Page = False
+        tender_id = browser.find_elements_by_xpath('//*[@id="MasterGC_ContentBlockHolder_dgResultado"]/tbody/tr/td[1]/div/span[1]')      
+        for index in range(len(tender_id)):
+            error = True
+            while error == True:
                 try:
-                    for next_page in browser.find_elements_by_xpath(f'//*[@class="TablaPagineo"]/td/a[{str(page_range)}]'):
-                        next_page.click()
-                        time.sleep(6)
-                        page_range +=
+                    tender_detail_list = []
+                    tender_idtext = tender_id[index].get_attribute('innerText').strip()
+                    tender_detail_list.append(tender_idtext)
+                    for publish_date in browser.find_elements_by_xpath(f'//*[@id="MasterGC_ContentBlockHolder_dgResultado"]/tbody/tr[{str(tr_count)}]/td[1]/div/span[2]'):
+                        publish_date = publish_date.get_attribute('innerText').replace('..','.').strip()
+                        tender_detail_list.append(publish_date)
                         break
+                    for tender_href in browser.find_elements_by_xpath(f'//*[@id="MasterGC_ContentBlockHolder_dgResultado"]/tbody/tr[{str(tr_count)}]/td[2]/div/div/a'):
+                        tender_href = tender_href.get_attribute('href').strip()
+                        tender_detail_list.append(tender_href)
+                        break
+                    Main_tender_detail_list.append(tender_detail_list)
+                    tr_count += 1
+                    error = False
+                except Exception as e:
+                    print(f'Error On Link Collect Loop:  {str(e)}')
+                    time.sleep(2)
+                    error = True
+        try:
+            for next_page in browser.find_elements_by_xpath(f'//*[@class="TablaPagineo"]/td/a'):
+                next_page_href = next_page.get_attribute('href').strip()
+                if f'{str(next_page_href)}' not in list_of_page:
+                    next_page.click()
+                    time.sleep(6)
+                    Page = True
+                    list_of_page.append(next_page_href)
                     break
-                except:
-                    print('Next Page Error')      
-            tr_count = 2
+        except Exception as e:
+            print(f'Error On Pagination Loop : {str(e)}')
+            time.sleep(2)
     nav_links(Main_tender_detail_list,browser)
 
 def nav_links(Main_tender_detail_list,browser):
@@ -146,8 +151,8 @@ def nav_links(Main_tender_detail_list,browser):
             break
         
         Scrap_data(browser, get_htmlsource_text,details,contactor_name,contact_amount)
-        print(f" Total: {str(len(Main_tender_detail_list))} Duplicate: {str(global_var.duplicate)} Inserted: {str(global_var.inserted)}\n")
-    ctypes.windll.user32.MessageBoxW(0, f"Total: {str(len(Main_tender_detail_list))}\nDuplicate: {str(global_var.duplicate)}\nInserted: {str(global_var.inserted)}", "guatecompras.gt", 1)
+        print(f" Total: {str(len(dist_main_detail_list1))} Duplicate: {str(global_var.duplicate)} Inserted: {str(global_var.inserted)}\n")
+    ctypes.windll.user32.MessageBoxW(0, f"Total: {str(len(dist_main_detail_list1))}\nDuplicate: {str(global_var.duplicate)}\nInserted: {str(global_var.inserted)}", "guatecompras.gt", 1)
     browser.close()
     sys.exit()
 
